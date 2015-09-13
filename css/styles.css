@@ -27,3 +27,7 @@
 #input, #output {
   height: 100%;
 }
+
+.pure-menu-heading span {
+  color: #aaa;
+}
