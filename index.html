@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="esfmt. Javascript formatting library">
+
+    <title>esfmt. Javascript formatting library</title>
+
+
+
+
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+
+
+
+<!--[if lte IE 8]>
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-old-ie-min.css">
+
+<![endif]-->
+<!--[if gt IE 8]><!-->
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+
+<!--<![endif]-->
+
+
+
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
+
+
+
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="css/layouts/marketing-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+        <link rel="stylesheet" href="css/layouts/marketing.css">
+    <!--<![endif]-->
+
+
+
+
+
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
+
+
+</head>
+<body>
+
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="" style="text-transform: none;">esfmt</a>
+
+        <ul id="menu-list" class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-selected">
+              <a href="https://github.com/dmitriiabramov/esfmt" class="pure-menu-link">github</a>
+            </li>
+            <li class="pure-menu-item pure-menu-selected">
+              <a href="https://www.npmjs.com/package/esfmt" class="pure-menu-link">npm</a>
+            </li>
+            <!-- <li class="pure&#45;menu&#45;item"><a href="#" class="pure&#45;menu&#45;link">Tour</a></li> -->
+            <!-- <li class="pure&#45;menu&#45;item"><a href="#" class="pure&#45;menu&#45;link">Sign Up</a></li> -->
+        </ul>
+    </div>
+</div>
+
+<div class="splash-container" style="height: 100%">
+    <div class="splash">
+
+      <table class="try-it">
+        <tr>
+          <td>
+            <div id="input">function foo(items) {
+  var x = "All this is syntax highlighted";
+  return x;
+}
+            </div>
+          </td>
+          <td><div id="output">test</div></td>
+      </table>
+
+      <script>
+        var input = ace.edit("input");
+        input.setTheme("ace/theme/twilight");
+        input.getSession().setMode("ace/mode/javascript");
+
+        var output = ace.edit("output");
+        output.setTheme("ace/theme/twilight");
+        output.getSession().setMode("ace/mode/javascript");
+      </script>
+        <!-- <h1 class="splash&#45;head">Big Bold Text</h1> -->
+        <!-- <p class="splash&#45;subhead"> -->
+        <!--     Lorem ipsum dolor sit amet, consectetur adipisicing elit. -->
+        <!-- </p> -->
+        <!-- <p> -->
+        <!--     <a href="http://purecss.io" class="pure&#45;button pure&#45;button&#45;primary">Get Started</a> -->
+        <!-- </p> -->
+    </div>
+</div>
+
+<!-- <div class="content&#45;wrapper"> -->
+<!--     <div class="footer l&#45;box is&#45;center"> -->
+<!--         View the source of this layout to learn more. Made with love by the YUI Team. -->
+<!--     </div> -->
+<!--  -->
+<!-- </div> -->
+
+
+
+
+
+
+</body>
+</html>
