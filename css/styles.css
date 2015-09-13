@@ -2,9 +2,10 @@
   color: white;
 }
 
-.splash {
+.my-splash {
   width: 100%;
-  top: 124px;
+  top: 62px;
+  position: relative;
   height: 100%;
   text-align: inherit;
 }

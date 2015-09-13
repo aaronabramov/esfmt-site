@@ -44,7 +44,11 @@
 
 
   <link rel="stylesheet" href="css/styles.css">
+  <script src="js/browser-polyfill.min.js"></script>
   <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
+  <script src="js/esfmt_bundle.js" type="text/javascript" charset="utf-8"></script>
+  <script src="
+https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" type="text/javascript" charset="utf-8"></script>
 
 
 </head>
@@ -68,28 +72,17 @@
 </div>
 
 <div class="splash-container" style="height: 100%">
-    <div class="splash">
+    <div class="my-splash">
 
       <table class="try-it">
         <tr>
           <td>
-            <div id="input">function foo(items) {
-  var x = "All this is syntax highlighted";
-  return x;
-}
-            </div>
+            <div id="input"></div>
           </td>
-          <td><div id="output">test</div></td>
+          <td><div id="output"></div></td>
       </table>
 
       <script>
-        var input = ace.edit("input");
-        input.setTheme("ace/theme/twilight");
-        input.getSession().setMode("ace/mode/javascript");
-
-        var output = ace.edit("output");
-        output.setTheme("ace/theme/twilight");
-        output.getSession().setMode("ace/mode/javascript");
       </script>
         <!-- <h1 class="splash&#45;head">Big Bold Text</h1> -->
         <!-- <p class="splash&#45;subhead"> -->
@@ -113,5 +106,6 @@
 
 
 
+  <script src="js/index.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
