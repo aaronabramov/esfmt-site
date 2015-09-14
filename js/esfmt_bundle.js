@@ -7828,7 +7828,7 @@ function format(node, context, recur) {
         rightParents && context.write(')');
     }
 }
-},{"./parentheses":68}],14:[function(require,module,exports){
+},{"./parentheses":74}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -8415,6 +8415,30 @@ var _nodesEmpty_statement = require('./nodes/empty_statement');
 
 var EmptyStatement = _interopRequireWildcard(_nodesEmpty_statement);
 
+var _nodesClass_declaration = require('./nodes/class_declaration');
+
+var ClassDeclaration = _interopRequireWildcard(_nodesClass_declaration);
+
+var _nodesClass_body = require('./nodes/class_body');
+
+var ClassBody = _interopRequireWildcard(_nodesClass_body);
+
+var _nodesMethod_definition = require('./nodes/method_definition');
+
+var MethodDefinition = _interopRequireWildcard(_nodesMethod_definition);
+
+var _nodesRest_element = require('./nodes/rest_element');
+
+var RestElement = _interopRequireWildcard(_nodesRest_element);
+
+var _nodesSuper = require('./nodes/super');
+
+var Super = _interopRequireWildcard(_nodesSuper);
+
+var _nodesSpread_element = require('./nodes/spread_element');
+
+var SpreadElement = _interopRequireWildcard(_nodesSpread_element);
+
 var _espree = require('espree');
 
 var _espree2 = _interopRequireDefault(_espree);
@@ -8431,7 +8455,15 @@ var _context = require('./context');
 
 var _context2 = _interopRequireDefault(_context);
 
+require('../polyfills/includes');
+
 var NODE_TYPES = {
+    SpreadElement: SpreadElement,
+    Super: Super,
+    RestElement: RestElement,
+    MethodDefinition: MethodDefinition,
+    ClassBody: ClassBody,
+    ClassDeclaration: ClassDeclaration,
     EmptyStatement: EmptyStatement,
     ExportSpecifier: ExportSpecifier,
     ExportNamedDeclaration: ExportNamedDeclaration,
@@ -8523,7 +8555,7 @@ function format(code, config) {
  * @param {Object} node esprima node
  * @param {Object} context formatting context object (state)
  */
-function formatAst(node, context, recur) {
+function formatAst(node, context, recur, options) {
     if (!node) {
         throw new Error('`node` argument is required. value: ' + JSON.stringify(node));
     }
@@ -8532,18 +8564,18 @@ function formatAst(node, context, recur) {
 
     // recur function that will hold context and itself in a closule.
     // only if it's not defined (first call)
-    recur || (recur = function (nextNode) {
+    recur || (recur = function (nextNode, nextOptions) {
         // console.log('next node: ', nextNode);
-        formatAst(nextNode, context, recur);
+        formatAst(nextNode, context, recur, nextOptions);
     });
 
     if (!nodeNamespace) {
         throw new Error('unknown node type: ' + node.type);
     }
 
-    nodeNamespace.format(node, context, recur);
+    nodeNamespace.format(node, context, recur, options);
 }
-},{"./context":16,"./default_config":17,"./esprima_options":19,"./nodes/array_expression":23,"./nodes/arrow_function_expression":24,"./nodes/assignment_expression":25,"./nodes/binary_expression":26,"./nodes/block_statement":27,"./nodes/call_expression":28,"./nodes/catch_clause":29,"./nodes/conditional_expression":30,"./nodes/do_while_statement":31,"./nodes/empty_statement":32,"./nodes/export_default_declaration":33,"./nodes/export_named_declaration":34,"./nodes/export_specifier":35,"./nodes/expression_statement":36,"./nodes/for_in_statement":37,"./nodes/for_statement":38,"./nodes/function_declaration":39,"./nodes/function_expression":40,"./nodes/identifier":41,"./nodes/if_statement":42,"./nodes/import_declaration":43,"./nodes/import_default_specifier":44,"./nodes/import_namespace_specifier":45,"./nodes/import_specifier":46,"./nodes/jsx_attribute":47,"./nodes/jsx_closing_element":48,"./nodes/jsx_element":49,"./nodes/jsx_expression_container":50,"./nodes/jsx_identifier":51,"./nodes/jsx_opening_element":52,"./nodes/literal":53,"./nodes/logical_expression":54,"./nodes/member_expression":55,"./nodes/new_expression":56,"./nodes/object_expression":57,"./nodes/program":58,"./nodes/property":59,"./nodes/return_statement":60,"./nodes/this_expression":61,"./nodes/throw_statement":62,"./nodes/try_statement":63,"./nodes/unary_expression":64,"./nodes/update_expression":65,"./nodes/variable_declaration":66,"./nodes/variable_declarator":67,"espree":2}],19:[function(require,module,exports){
+},{"../polyfills/includes":75,"./context":16,"./default_config":17,"./esprima_options":19,"./nodes/array_expression":23,"./nodes/arrow_function_expression":24,"./nodes/assignment_expression":25,"./nodes/binary_expression":26,"./nodes/block_statement":27,"./nodes/call_expression":28,"./nodes/catch_clause":29,"./nodes/class_body":30,"./nodes/class_declaration":31,"./nodes/conditional_expression":32,"./nodes/do_while_statement":33,"./nodes/empty_statement":34,"./nodes/export_default_declaration":35,"./nodes/export_named_declaration":36,"./nodes/export_specifier":37,"./nodes/expression_statement":38,"./nodes/for_in_statement":39,"./nodes/for_statement":40,"./nodes/function_declaration":41,"./nodes/function_expression":42,"./nodes/identifier":43,"./nodes/if_statement":44,"./nodes/import_declaration":45,"./nodes/import_default_specifier":46,"./nodes/import_namespace_specifier":47,"./nodes/import_specifier":48,"./nodes/jsx_attribute":49,"./nodes/jsx_closing_element":50,"./nodes/jsx_element":51,"./nodes/jsx_expression_container":52,"./nodes/jsx_identifier":53,"./nodes/jsx_opening_element":54,"./nodes/literal":55,"./nodes/logical_expression":56,"./nodes/member_expression":57,"./nodes/method_definition":58,"./nodes/new_expression":59,"./nodes/object_expression":60,"./nodes/program":61,"./nodes/property":62,"./nodes/rest_element":63,"./nodes/return_statement":64,"./nodes/spread_element":65,"./nodes/super":66,"./nodes/this_expression":67,"./nodes/throw_statement":68,"./nodes/try_statement":69,"./nodes/unary_expression":70,"./nodes/update_expression":71,"./nodes/variable_declaration":72,"./nodes/variable_declarator":73,"espree":2}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8663,7 +8695,8 @@ var DONT_NEED_SEMICOLON_AFTER = {
     ForStatement: true,
     FunctionDeclaration: true,
     IfStatement: true,
-    TryStatement: true
+    TryStatement: true,
+    ClassDeclaration: true
 };
 
 /**
@@ -9118,6 +9151,130 @@ function format(node, context, recur) {
 },{}],30:[function(require,module,exports){
 /**
  *  {
+ *      type: 'ClassBody',
+ *      body: [{
+ *          type: 'MethodDefinition',
+ *          key: [Object],
+ *          value: [Object],
+ *          kind: 'constructor',
+ *          computed: false,
+ *          static: false
+ *      }, {
+ *          type: 'MethodDefinition',
+ *          key: [Object],
+ *          value: [Object],
+ *          kind: 'get',
+ *          computed: false,
+ *          static: false
+ *      }, {
+ *          type: 'MethodDefinition',
+ *          key: [Object],
+ *          value: [Object],
+ *          kind: 'method',
+ *          computed: false,
+ *          static: false
+ *      }]
+ *  }
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+exports.format = format;
+
+function format(node, context, recur) {
+    context.write('{');
+    context.indentIn();
+
+    for (var i = 0; i < node.body.length; i++) {
+        if (node.body[i - 1]) {
+            context.write('\n');
+        }
+
+        context.write('\n', context.getIndent());
+        recur(node.body[i]);
+    }
+
+    context.indentOut();
+    context.write('\n', context.getIndent(), '}');
+}
+
+;
+},{}],31:[function(require,module,exports){
+/**
+ *  {
+ *     type: 'ClassDeclaration',
+ *     id: {
+ *         type: 'Identifier',
+ *         name: 'ABC',
+ *         range: [6, 9],
+ *         loc: {
+ *             start: [Object],
+ *             end: [Object]
+ *         }
+ *     },
+ *     superClass: {
+ *         type: 'MemberExpression',
+ *         computed: false,
+ *         object: {
+ *             type: 'Identifier',
+ *             name: 'React',
+ *             range: [Object],
+ *             loc: [Object]
+ *         },
+ *         property: {
+ *             type: 'Identifier',
+ *             name: 'Component',
+ *             range: [Object],
+ *             loc: [Object]
+ *         },
+ *         range: [18, 33],
+ *         loc: {
+ *             start: [Object],
+ *             end: [Object]
+ *         }
+ *     },
+ *     body: {
+ *         type: 'ClassBody',
+ *         body: [
+ *             [Object],
+ *             [Object],
+ *             [Object]
+ *         ],
+ *         range: [34, 140],
+ *         loc: {
+ *             start: [Object],
+ *             end: [Object]
+ *         }
+ *     },
+ * }
+ */
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+exports.format = format;
+
+function format(node, context, recur) {
+    context.write('class ');
+    recur(node.id);
+
+    if (node.superClass) {
+        context.write(' extends ');
+        recur(node.superClass);
+    }
+
+    context.write(' ');
+    recur(node.body);
+}
+
+;
+},{}],32:[function(require,module,exports){
+/**
+ *  {
  *      type: 'ConditionalExpression',
  *      test: {
  *          type: 'LogicalExpression',
@@ -9158,7 +9315,7 @@ function format(node, context, recur) {
   context.write(' : ');
   recur(node.alternate);
 }
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /**
  *  {
  *      type: 'DoWhileStatement',
@@ -9205,7 +9362,7 @@ function format(node, context, recur) {
   recur(node.test);
   context.write(')');
 }
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  *  {
  *      type: 'EmptyStatement',
@@ -9234,7 +9391,7 @@ exports.format = format;
 function format(node, context, recur) {}
 
 ;
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  *  {
  *      type: 'ExportDefaultDeclaration',
@@ -9271,7 +9428,7 @@ function format(node, context, recur) {
   context.write('export default ');
   recur(node.declaration);
 }
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  *  {
  *      type: 'ExportNamedDeclaration',
@@ -9323,7 +9480,7 @@ function format(node, context, recur) {
         }
     }
 }
-},{"../list":21}],35:[function(require,module,exports){
+},{"../list":21}],37:[function(require,module,exports){
 /**
  *  {
  *      type: 'ExportSpecifier',
@@ -9365,7 +9522,7 @@ function format(node, context, recur) {
         recur(node.exported);
     }
 }
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  *  {
  *      type: 'ExpressionStatement',
@@ -9393,7 +9550,7 @@ exports.format = format;
 function format(node, context, recur) {
   recur(node.expression);
 }
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  *  {
  *      type: 'ForInStatement',
@@ -9433,7 +9590,7 @@ function format(node, context, recur) {
   context.write(') ');
   recur(node.body);
 }
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
  *  {
  *      type: 'ForStatement',
@@ -9492,7 +9649,7 @@ function format(node, context, recur) {
   context.write(') ');
   recur(node.body);
 }
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  *  {
  *      type: 'FunctionDeclaration',
@@ -9543,7 +9700,7 @@ function format(node, context, recur) {
     context.write(' ');
     recur(node.body);
 }
-},{"../list":21}],40:[function(require,module,exports){
+},{"../list":21}],42:[function(require,module,exports){
 /**
  *  {
  *      type: 'FunctionExpression',
@@ -9572,8 +9729,25 @@ exports.format = format;
 
 var _list = require('../list');
 
+/**
+ * @param {Boolean} noFunctionKeyword if set to true, then `function` will not be printed.
+ *  in class definitions the `constructor` is defined in the class itself, and the function
+ *  declaration is expected to be just `() {}`
+ *
+ *      class A {
+ *          constructor() {
+ *          }
+ *      }
+ */
+
 function format(node, context, recur) {
-    context.write('function');
+    var _ref = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+
+    var noFunctionKeyword = _ref.noFunctionKeyword;
+
+    if (!noFunctionKeyword) {
+        context.write('function');
+    }
 
     if (node.id) {
         context.write(' ');
@@ -9592,7 +9766,7 @@ function format(node, context, recur) {
     context.write(' ');
     recur(node.body);
 }
-},{"../list":21}],41:[function(require,module,exports){
+},{"../list":21}],43:[function(require,module,exports){
 /**
  * { type: 'Identifier', name: 'a' }
  */
@@ -9607,7 +9781,7 @@ exports.format = format;
 function format(node, context, recur) {
   context.write(node.name);
 }
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  *  {
  *      type: 'IfStatement',
@@ -9663,7 +9837,7 @@ function format(node, context, recur) {
         recur(node.alternate);
     }
 }
-},{"../line_terminator":20}],43:[function(require,module,exports){
+},{"../line_terminator":20}],45:[function(require,module,exports){
 /**
  *  {
  *      type: 'ImportDeclaration',
@@ -9741,7 +9915,7 @@ function format(node, context, recur) {
     context.write(' from ');
     recur(node.source);
 }
-},{"../list":21}],44:[function(require,module,exports){
+},{"../list":21}],46:[function(require,module,exports){
 /**
  *   {
  *      type: 'ImportDefaultSpecifier',
@@ -9762,7 +9936,7 @@ exports.format = format;
 function format(node, context, recur) {
   recur(node.local);
 }
-},{}],45:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  *  {
  *      type: 'ImportNamespaceSpecifier',
@@ -9784,7 +9958,7 @@ function format(node, context, recur) {
   context.write('* as ');
   recur(node.local);
 }
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 /**
  *  {
  *      type: 'ImportSpecifier',
@@ -9825,7 +9999,7 @@ function format(node, context, recur) {
         recur(node.local);
     }
 }
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  *    {
  *        type: 'JSXAttribute',
@@ -9853,7 +10027,7 @@ function format(node, context, recur) {
   context.write('=');
   recur(node.value);
 }
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  *  {
  *      type: 'JSXClosingElement',
@@ -9876,7 +10050,7 @@ function format(node, context, recur) {
   recur(node.name);
   context.write('>');
 }
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  *  {
  *      type: 'JSXElement',
@@ -9976,7 +10150,7 @@ function notWhitespaceLiteral(node) {
 
     return true;
 }
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /**
  *  {
  *      type: 'JSXExpressionContainer',
@@ -9998,7 +10172,7 @@ function format(node, context, recur) {
   recur(node.expression);
   context.write('}');
 }
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /**
  * { type: 'JSXIdentifier', name: 'div' }
  */
@@ -10013,7 +10187,7 @@ exports.format = format;
 function format(node, context, recur) {
   context.write(node.name);
 }
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /**
  *  {
  *      type: 'JSXOpeningElement',
@@ -10055,7 +10229,7 @@ function format(node, context, recur) {
 
     context.write('>');
 }
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 /**
  * { type: 'Literal', value: 5, raw: '5' }
  */
@@ -10071,7 +10245,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 /**
  *  {
  *      type: 'LogicalExpression',
@@ -10104,7 +10278,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{"../binary":13}],55:[function(require,module,exports){
+},{"../binary":13}],57:[function(require,module,exports){
 /**
  *  {
  *      type: 'MemberExpression',
@@ -10139,7 +10313,59 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
+/**
+ *  {
+ *      type: 'MethodDefinition',
+ *      key: {
+ *          type: 'Identifier',
+ *          name: 'constructor'
+ *      },
+ *      value: {
+ *          type: 'FunctionExpression',
+ *          id: null,
+ *          params: [],
+ *          body: {
+ *              type: 'BlockStatement',
+ *              body: []
+ *          },
+ *          generator: false,
+ *          expression: false
+ *      },
+ *      kind: 'constructor',
+ *      computed: false,
+ *      static: false
+ *  }
+ */
+
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+exports.format = format;
+
+var _list = require('../list');
+
+function format(node, context, recur) {
+    if (node['static']) {
+        context.write('static ');
+    }
+
+    if (node.kind === 'get') {
+        context.write('get ');
+    }
+
+    if (node.kind === 'set') {
+        context.write('set ');
+    }
+
+    recur(node.key);
+    recur(node.value, { noFunctionKeyword: true });
+}
+
+;
+},{"../list":21}],59:[function(require,module,exports){
 /**
  *  {
  *      type: 'NewExpression',
@@ -10173,7 +10399,7 @@ function format(node, context, recur) {
         (0, _list.short)(node.arguments, context, recur, '()');
     };
 }
-},{"../list":21}],57:[function(require,module,exports){
+},{"../list":21}],60:[function(require,module,exports){
 /**
  *  {
  *      type: 'ObjectExpression',
@@ -10241,7 +10467,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{"../parentheses":68}],58:[function(require,module,exports){
+},{"../parentheses":74}],61:[function(require,module,exports){
 /**
  *  {
  *      type: 'Program',
@@ -10266,7 +10492,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{"../block":14}],59:[function(require,module,exports){
+},{"../block":14}],62:[function(require,module,exports){
 /**
  *  {
  *      type: 'Property',
@@ -10299,7 +10525,30 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
+/**
+ *  {
+ *      type: 'RestElement',
+ *      argument: {
+ *          type: 'Identifier',
+ *          name: 'args'
+ *      }
+ *  }
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.format = format;
+
+function format(node, context, recur) {
+  context.write('...');
+  recur(node.argument);
+}
+
+;
+},{}],64:[function(require,module,exports){
 /**
  *    argument: {
  *        type: 'BinaryExpression',
@@ -10331,7 +10580,44 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],61:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
+/**
+ *  {
+ *      type: 'SpreadElement',
+ *      argument: {
+ *          type: 'Identifier',
+ *          name: 'args'
+ *      }
+ *  }
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.format = format;
+
+function format(node, context, recur) {
+  context.write('...');
+  recur(node.argument);
+}
+},{}],66:[function(require,module,exports){
+/**
+ *  {
+ *      type: 'Super',
+ *  }
+ */
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+  value: true
+});
+exports.format = format;
+
+function format(node, context, recur) {
+  context.write('super');
+}
+},{}],67:[function(require,module,exports){
 /**
  *  { type: 'ThisExpression' }
  */
@@ -10347,7 +10633,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],62:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  *  {
  *      type: 'ThrowStatement',
@@ -10379,7 +10665,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],63:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  *  {
  *      type: 'TryStatement',
@@ -10430,7 +10716,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],64:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 /**
  *  {
  *      type: 'UnaryExpression',
@@ -10465,7 +10751,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],65:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /**
  *  {
  *      type: 'UpdateExpression',
@@ -10495,7 +10781,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],66:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
  *  {
  *      type: 'VariableDeclaration',
@@ -10545,7 +10831,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],67:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 /**
  *  {
  *      type: 'VariableDeclarator',
@@ -10576,7 +10862,7 @@ function format(node, context, recur) {
 }
 
 ;
-},{}],68:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /**
  * Map of operators to their precendenge numeric value (starting from 1),
  * the lower the index, the higher the precedence
@@ -10670,4 +10956,36 @@ function hasPrecedence(op1, op2) {
 function wrapInParantheses(str) {
     return '(' + str + ')';
 }
+},{}],75:[function(require,module,exports){
+if (!Array.prototype.includes) {
+    Array.prototype.includes = function(searchElement /*, fromIndex*/ ) {
+        'use strict';
+        var O = Object(this);
+        var len = parseInt(O.length) || 0;
+        if (len === 0) {
+            return false;
+        }
+        var n = parseInt(arguments[1]) || 0;
+        var k;
+        if (n >= 0) {
+            k = n;
+        } else {
+            k = len + n;
+            if (k < 0) {
+                k = 0;
+            }
+        }
+        var currentElement;
+        while (k < len) {
+            currentElement = O[k];
+            if (searchElement === currentElement ||
+                (searchElement !== searchElement && currentElement !== currentElement)) {
+                return true;
+            }
+            k++;
+        }
+        return false;
+    };
+}
+
 },{}]},{},[1]);
